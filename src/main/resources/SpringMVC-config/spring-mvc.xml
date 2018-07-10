@@ -22,7 +22,14 @@
 
     <!--扫描base-pack下面或者子包下面的java文件，如果扫描到有@Component @Controller@Service等这些注解的类，则把这些类注册为bean -->
     <context:component-scan base-package="com.manong.controller" />
-
+    <!-- 基于注解的拦截 -->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!-- /**表示所有url包括子url路径 -->
+            <mvc:mapping path="/**"/>
+            <bean class="com.manong.filter.AuthorityIntercept" />
+        </mvc:interceptor>
+    </mvc:interceptors>
     <!-- 解决json返回乱码 -->
     <mvc:annotation-driven>
         <mvc:message-converters register-defaults="true">
