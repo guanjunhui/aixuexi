@@ -1,11 +1,11 @@
 package com.manong.controller;
 
-import javax.annotation.Resource;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Controller;
@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class MQController {
 
-	@Resource(name="jmsQueueTemplate")
+	@Autowired
 	private JmsTemplate jmsTemplate;
 	
-	@Resource(name="mqDestination")
+	@Autowired
 	private Destination destination;
 	
 	@ResponseBody

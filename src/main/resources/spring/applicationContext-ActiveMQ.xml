@@ -33,9 +33,7 @@
       <!--定义消息队列  -->
       <bean id="mqDestination" class="org.apache.activemq.command.ActiveMQQueue">
      	<!--消息队列名称  -->
-      	<constructor-arg>
-      		<value>spring-mq</value>
-      	</constructor-arg>
+     	<constructor-arg index="0" value="spring-mq"/>
       </bean>
       
       <!-- <bean id="tttTopicDestination" class="org.apache.activemq.command.ActiveMQTopic">
@@ -70,12 +68,6 @@
         <property name="destination" ref="mqDestination"/>
         <property name="messageListener" ref="queueListener"/>
       </bean>
-      
-      
-      <jms:listener-container destination-type="queue" container-type="default" connection-factory="connectionFactory" acknowledge="auto">
-      	<!-- 队列监听器  -->
-      	<jms:listener destination="ttt.queue" ref="queueListener"/>
-      </jms:listener-container>
       
       <!-- <jms:listener-container destination-type="topic" container-type="default" connection-factory="connectionFactory" acknowledge="auto">
       	Topic监听器 
