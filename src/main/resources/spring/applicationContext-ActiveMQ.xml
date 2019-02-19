@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+        xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+        xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:jms="http://www.springframework.org/schema/jms" xmlns:amq="http://activemq.apache.org/schema/core"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans  
+      http://www.springframework.org/schema/beans/spring-beans-4.0.xsd  
+      http://www.springframework.org/schema/context  
+      http://www.springframework.org/schema/context/spring-context-4.0.xsd  
+      http://www.springframework.org/schema/mvc  
+      http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+      http://www.springframework.org/schema/tx  
+      http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+      http://www.springframework.org/schema/aop  
+      http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+      http://www.springframework.org/schema/jms  
+      http://www.springframework.org/schema/jms/spring-jms-4.0.xsd
+      http://activemq.apache.org/schema/core
+      http://activemq.apache.org/schema/core/activemq-core-5.14.5.xsd">
+      
+      <bean id="connectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" destroy-method="stop">
+        <property name="connectionFactory">
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+                <property name="brokerURL">
+                    <value>tcp://127.0.0.1:61616</value>
+                </property>
+            </bean>
+        </property>
+        <property name="maxConnections" value="50"/>
+    </bean>
+      
+      <!--定义消息队列  -->
+      <bean id="mqDestination" class="org.apache.activemq.command.ActiveMQQueue">
+     	<!--消息队列名称  -->
+      	<constructor-arg>
+      		<value>spring-mq</value>
+      	</constructor-arg>
+      </bean>
+      
+      <!-- <bean id="tttTopicDestination" class="org.apache.activemq.command.ActiveMQTopic">
+      	订阅主题名称 
+      	<constructor-arg>
+      		<value>ttt.topic</value>
+      	</constructor-arg>
+      </bean> -->
+      
+      <!--消息生产者  -->
+      <!--队列类型JmsTemplate  -->
+      <bean id="jmsQueueTemplate" class="org.springframework.jms.core.JmsTemplate">
+      	<property name="connectionFactory" ref="connectionFactory"/>
+      	<property name="defaultDestination" ref="mqDestination"/>
+      	<property name="receiveTimeout" value="10000"/>
+      	<!--非pub/sub（发布/订阅）模式，即队列模式 -->
+      	<property name="pubSubDomain" value="false"/>
+      </bean>
+      
+      <!--Topic类型JmsTemplate  -->
+      <!-- <bean id="jmsTopicTemplate" class="org.springframework.jms.core.JmsTemplate">
+      	<property name="connectionFactory" ref="connectionFactory"/>
+      	<property name="defaultDestination" ref="tttTopicDestination"/>
+      	<property name="receiveTimeout" value="10000"/>
+      	pub/sub（发布/订阅）模式
+      	<property name="pubSubDomain" value="true"/>      
+      </bean> -->
+      
+      <!--消息消费者-->
+      <bean id="jmsContainer" class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="destination" ref="mqDestination"/>
+        <property name="messageListener" ref="queueListener"/>
+      </bean>
+      
+      
+      <jms:listener-container destination-type="queue" container-type="default" connection-factory="connectionFactory" acknowledge="auto">
+      	<!-- 队列监听器  -->
+      	<jms:listener destination="ttt.queue" ref="queueListener"/>
+      </jms:listener-container>
+      
+      <!-- <jms:listener-container destination-type="topic" container-type="default" connection-factory="connectionFactory" acknowledge="auto">
+      	Topic监听器 
+      	<jms:listener destination="ttt.topic" ref="topicListener"/>
+      </jms:listener-container> -->
+</beans>

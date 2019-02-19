@@ -17,7 +17,8 @@ public class AuthorityIntercept extends HandlerInterceptorAdapter {
     private List<String> allowList = Arrays.asList(
             "/student/list",
             "/index",
-            "/login"
+            "/login",
+            "/mqsend"
     );
 
     private static final PathMatcher PATH_MATCHER = new AntPathMatcher();
